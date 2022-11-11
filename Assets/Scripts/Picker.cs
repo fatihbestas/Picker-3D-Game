@@ -5,21 +5,21 @@ public class Picker : MonoBehaviour
 
     public float speedForZ_axis; 
     public Rigidbody rb; 
-    private Vector3 direction;
+    private Vector3 velocityVector;
     private Touch touch;
-    private float speedModifierForX_axis = 1;
+    private float speedForX_axis = 10;
  
     void Start()
     {
        
         rb = this.GetComponent<Rigidbody>();
 
-        direction = new Vector3(1f, 0, 1f);
+        velocityVector = new Vector3(0, 0, 0);
     }
 
     void Update()
     {
-        Debug.Log(TouchInputForX_axis());
+        velocityVector.x =  speedForX_axis * TouchInputForX_axis();
     }
 
     float TouchInputForX_axis()
@@ -38,20 +38,16 @@ public class Picker : MonoBehaviour
             }
             else
             {
-                return touch.deltaPosition.x;
+                return Mathf.Sign(touch.deltaPosition.x);
             }
         }
     }
  
     void FixedUpdate()
     {
-        Move(direction); 
-    }
- 
- 
-    void Move(Vector3 direction)
-    {
-        rb.velocity = direction * speedForZ_axis;
+        velocityVector.z = speedForZ_axis;
+
+        rb.velocity = velocityVector;
     }
  
 }
