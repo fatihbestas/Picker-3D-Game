@@ -3,18 +3,45 @@ using UnityEngine;
 public class Picker : MonoBehaviour
 {
 
-    public float speed; 
+    public float speedForZ_axis; 
     public Rigidbody rb; 
     private Vector3 direction;
+    private Touch touch;
+    private float speedModifierForX_axis = 1;
  
     void Start()
     {
        
         rb = this.GetComponent<Rigidbody>();
-        // picker only moves in z axis for now
-        direction = new Vector3(0, 0, 1f);
+
+        direction = new Vector3(1f, 0, 1f);
     }
- 
+
+    void Update()
+    {
+        Debug.Log(TouchInputForX_axis());
+    }
+
+    float TouchInputForX_axis()
+    {
+        if(Input.touchCount == 0)
+        {
+            return 0;
+        }
+        else
+        {
+            touch = Input.GetTouch(0);
+
+            if(touch.phase != TouchPhase.Moved)
+            {
+                return 0;
+            }
+            else
+            {
+                return touch.deltaPosition.x;
+            }
+        }
+    }
  
     void FixedUpdate()
     {
@@ -24,7 +51,7 @@ public class Picker : MonoBehaviour
  
     void Move(Vector3 direction)
     {
-        rb.velocity = direction * speed * Time.fixedDeltaTime;
+        rb.velocity = direction * speedForZ_axis;
     }
  
 }
