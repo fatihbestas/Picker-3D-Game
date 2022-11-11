@@ -11,7 +11,6 @@ public class Picker : MonoBehaviour
  
     void Start()
     {
-       
         rb = this.GetComponent<Rigidbody>();
 
         velocityVector = new Vector3(0, 0, 0);
@@ -19,11 +18,23 @@ public class Picker : MonoBehaviour
 
     void Update()
     {
+        // movement in the x-axis depending on the user's drag input.
         velocityVector.x =  speedForX_axis * TouchInputForX_axis();
+
+        // for editor debug
+        if(Input.GetKey(KeyCode.A))
+        {
+            velocityVector.x =  -speedForX_axis;
+        }
+        else if(Input.GetKey(KeyCode.D))
+        {
+            velocityVector.x =  speedForX_axis;
+        }
     }
 
     float TouchInputForX_axis()
     {
+        // if there is a drag input, return its direction.
         if(Input.touchCount == 0)
         {
             return 0;
@@ -45,8 +56,10 @@ public class Picker : MonoBehaviour
  
     void FixedUpdate()
     {
+        // The picker is constantly moving in the Z axis.
         velocityVector.z = speedForZ_axis;
 
+        // Apply the calculated velocity vector to the picker.
         rb.velocity = velocityVector;
     }
  
