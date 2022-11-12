@@ -4,8 +4,8 @@ public class CameraController : MonoBehaviour
 {
     public Transform target;
     private int view;
-    public Vector3 offsetForView1; // 0 32 -35
-    private Vector3 rotationForView1 = new Vector3(20f, 0, 0);
+    public Vector3 offsetForView1; // 0 32 -30
+    private Vector3 rotationForView1 = new Vector3(25f, 0, 0);
     public Vector3 offsetForView2; // 0 10 -16
     private Vector3 rotationForView2 = new Vector3(10f, 0, 0);
 
@@ -16,7 +16,7 @@ public class CameraController : MonoBehaviour
         SetCameratoView1();
     }
 
-    void Update()
+    void LateUpdate()
     {
         if(view == 1)
         {

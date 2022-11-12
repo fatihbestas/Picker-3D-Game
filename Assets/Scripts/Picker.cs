@@ -8,6 +8,7 @@ public class Picker : MonoBehaviour
     private Vector3 velocityVector;
     private Touch touch;
     private float speedForX_axis = 10;
+    private bool reachedEndPoint = false;
  
     void Start()
     {
@@ -55,12 +56,30 @@ public class Picker : MonoBehaviour
     }
  
     void FixedUpdate()
-    {
+    {   
+        // If the end of the level is not reached,
         // The picker is constantly moving in the Z axis.
-        velocityVector.z = speedForZ_axis;
+        if(reachedEndPoint)
+        {
+            velocityVector.z = 0;
+        }
+        else
+        {
+            velocityVector.z = speedForZ_axis;
+        }
+        
 
         // Apply the calculated velocity vector to the picker.
         rb.velocity = velocityVector;
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        // When the picker reaches the end of the level, it stops and releases the balls.
+        if(other.CompareTag("EndPoint"))
+        {
+            reachedEndPoint = true;
+        }
     }
  
 }
