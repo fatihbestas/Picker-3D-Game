@@ -90,6 +90,6 @@ public class BallBox : MonoBehaviour
 
     void StageFailed()
     {
-        
+        GameManager.Instance.LevelFailed();
     }
 }

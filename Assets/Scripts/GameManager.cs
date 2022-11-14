@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : Singleton<GameManager>, IDataPersistence
 {
@@ -79,6 +80,17 @@ public class GameManager : Singleton<GameManager>, IDataPersistence
         // istenen levelin gameobjesini döndür.
         // diziye index olarak levelin numarasının bir eksiği gönderilmeli.
         return levels[levelNumber - 1];
+    }
+
+    public void LevelFailed()
+    {
+        playScreen.SetActive(false);
+        levelFailedScreen.SetActive(true);
+    }
+
+    public void Restart()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
     void Victory()
