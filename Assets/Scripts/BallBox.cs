@@ -5,36 +5,46 @@ using TMPro;
 
 public class BallBox : MonoBehaviour
 {
-    public TextMeshProUGUI ballCountText;
-    public float requiredBalls;
-    private float collectedBalls;
-    
+    public TextMeshProUGUI objectCountText;
+    public int requiredObjects;
+    private int collectedObjects;
+    public Animator animator;
+    private bool stagePassed;
 
     void Start()
     {
-        ballCountText.text = collectedBalls.ToString() + " / " + requiredBalls.ToString();
+        objectCountText.text = collectedObjects.ToString() + " / " + requiredObjects.ToString();
+        stagePassed = false;
     }
 
     void Update()
-    {
-        
+    {   
+        // Eğer yeterli nesne toplandıysa belirli bir süre bekledikten sonra animasyonu başlat ve
+        // bu bölümün geçildiğini GameManager'a söyle.
+        if(collectedObjects >= requiredObjects && !stagePassed)
+        {
+            stagePassed = true;
+            Invoke("StagePassed", 1f);
+        }
     }
 
     void OnCollisionEnter(Collision collision)
     {
-        if(collision.transform.CompareTag("Ball"))
+        if(collision.transform.CompareTag("Collectible"))
         {
-            // top temas edince sayacı güncelle.
-            collectedBalls += 1;
-            ballCountText.text = collectedBalls.ToString() + " / " + requiredBalls.ToString();
+            // toplanabilir bir nesne temas edince sayacı güncelle.
+            collectedObjects += 1;
+            objectCountText.text = collectedObjects.ToString() + " / " + requiredObjects.ToString();
 
-            // Temas edilen topun collider komponentini disable ediyoruz.
-            // Böylece bir topu birden fazla kez saymayacak.
-            collision.gameObject.GetComponent<SphereCollider>().enabled = false;
-
-            // ardından topu yok ediyoruz. şimdilik sadece yok edilecek. ilerde parçalanma animasyonu
-            // yapılacak.
-            Destroy(collision.gameObject);   
+            // Temas edilen nesnenin Y ekseninde hareket etme özelliğini kapatalım. Böylece nesne zıplamaz
+            // ve aynı nesne onCollisionEnter fonksiyonunu tekrar çalıştırmaz.
+            collision.gameObject.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionY;
         }
+    }
+
+    void StagePassed()
+    {
+        animator.SetTrigger("slideGround");
+        GameManager.Instance.stagePassed = true;
     }
 }
