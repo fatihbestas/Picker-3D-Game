@@ -5,6 +5,7 @@ using TMPro;
 
 public class BallBox : MonoBehaviour
 {
+    [SerializeField]private GameObject endpoint;
     public TextMeshProUGUI objectCountText;
     public int requiredObjects;
     private int collectedObjects;
@@ -46,5 +47,14 @@ public class BallBox : MonoBehaviour
     {
         animator.SetTrigger("slideGround");
         GameManager.Instance.stagePassed = true;
+        // animasyon başladıktan 1.5 saniye sonra picker'ı hareket ettir.
+        Invoke("MovePicker", 1.5f);
+    }
+
+    void MovePicker()
+    {
+        // OnTriggerEnter tekrar çalşıp da picker'ı durdurmasın diye endpoint nesnesini kapat.
+        endpoint.SetActive(false);
+        Picker.Instance.MoveToNextStage();
     }
 }

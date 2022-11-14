@@ -1,20 +1,23 @@
 using UnityEngine;
 
-public class Picker : MonoBehaviour
+public class Picker : Singleton<Picker>
 {
-
     public float speedForZ_axis; 
     public Rigidbody rb; 
     private Vector3 velocityVector;
     private Touch touch;
     private float speedForX_axis = 10;
     private bool reachedEndPoint = false;
+    private int currentLevel;
+    private Transform startingPoint;
  
     void Start()
     {
         rb = this.GetComponent<Rigidbody>();
 
         velocityVector = new Vector3(0, 0, 0);
+
+        PlaceAtStartingPoint();
     }
 
     void Update()
@@ -31,6 +34,14 @@ public class Picker : MonoBehaviour
         {
             velocityVector.x =  speedForX_axis;
         }
+    }
+
+    void PlaceAtStartingPoint()
+    {
+        // toplayıcıyı mevcut levelin başlangıç noktasına yerleştir.
+        currentLevel = GameManager.Instance.currentLevel;
+        startingPoint = GameManager.Instance.GetLevelGO(currentLevel).GetComponent<LevelData>().startingPoint;
+
     }
 
     float TouchInputForX_axis()
@@ -80,6 +91,11 @@ public class Picker : MonoBehaviour
         {
             reachedEndPoint = true;
         }
+    }
+
+    public void MoveToNextStage()
+    {
+        reachedEndPoint = false;
     }
  
 }
