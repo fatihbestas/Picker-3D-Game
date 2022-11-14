@@ -5,8 +5,9 @@ public class Picker : Singleton<Picker>
     public float speedForZ_axis; 
     public Rigidbody rb; 
     private Vector3 velocityVector;
-    private Touch touch;
-    private float speedForX_axis = 10;
+    private Vector3 positionVector;
+    private float speedForX_axis = 20;
+    private float speedCoeffForX = 1;
     private bool reachedEndPoint = false;
     private int currentLevel;
     private Transform startingPoint;
@@ -23,22 +24,24 @@ public class Picker : Singleton<Picker>
     void Update()
     {
         // movement in the x-axis depending on the user's drag input.
-        velocityVector.x =  speedForX_axis * TouchInputForX_axis();
+        velocityVector.x =  speedCoeffForX * TouchInputForX_axis();
+
+        velocityVector.x = Mathf.Clamp(velocityVector.x, -speedForX_axis, speedForX_axis);
 
         // for editor debug
         if(Input.GetKey(KeyCode.A))
         {
-            velocityVector.x =  -speedForX_axis;
+            velocityVector.x =  -speedForX_axis / 2;
         }
         else if(Input.GetKey(KeyCode.D))
         {
-            velocityVector.x =  speedForX_axis;
+            velocityVector.x =  speedForX_axis / 2;
         }
     }
 
     void PlaceAtStartingPoint()
     {
-        // toplayıcıyı mevcut levelin başlangıç noktasına yerleştir.
+        // Place the picker at current level starting point.
         currentLevel = GameManager.Instance.currentLevel;
         startingPoint = GameManager.Instance.GetLevelGO(currentLevel).GetComponent<LevelData>().startingPoint;
 
@@ -46,23 +49,13 @@ public class Picker : Singleton<Picker>
 
     float TouchInputForX_axis()
     {
-        // if there is a drag input, return its direction.
-        if(Input.touchCount == 0)
+        if(Input.touchCount != 0 && Input.GetTouch(0).phase == TouchPhase.Moved)
         {
-            return 0;
+            return (Input.GetTouch(0).deltaPosition.x / Screen.width) * 1000;
         }
         else
         {
-            touch = Input.GetTouch(0);
-
-            if(touch.phase != TouchPhase.Moved)
-            {
-                return 0;
-            }
-            else
-            {
-                return Mathf.Sign(touch.deltaPosition.x);
-            }
+            return 0;
         }
     }
  
@@ -78,10 +71,16 @@ public class Picker : Singleton<Picker>
         {
             velocityVector.z = speedForZ_axis;
         }
-        
 
         // Apply the calculated velocity vector to the picker.
         rb.velocity = velocityVector;
+    }
+
+    void LateUpdate()
+    {
+        positionVector = transform.position;
+        positionVector.x = Mathf.Clamp(positionVector.x, -5.5f, 5.5f);
+        transform.position = positionVector;
     }
 
     public void Stop()
