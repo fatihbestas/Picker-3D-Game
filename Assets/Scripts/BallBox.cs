@@ -9,23 +9,53 @@ public class BallBox : MonoBehaviour
     public TextMeshProUGUI objectCountText;
     public int requiredObjects;
     private int collectedObjects;
+    private int lastCollectedObjects;
     public Animator animator;
-    private bool stagePassed;
+    public bool stageEnded;
+    private bool decisionMade;
+    private float timeCounter;
+    private float timeDelay = 3f;
 
     void Start()
     {
+        collectedObjects = 0;
+        lastCollectedObjects = 0;
         objectCountText.text = collectedObjects.ToString() + " / " + requiredObjects.ToString();
-        stagePassed = false;
+        stageEnded = false;
+        decisionMade = false;
+        timeCounter = timeDelay;
     }
 
     void Update()
     {   
-        // Eğer yeterli nesne toplandıysa belirli bir süre bekledikten sonra animasyonu başlat ve
-        // bu bölümün geçildiğini GameManager'a söyle.
-        if(collectedObjects >= requiredObjects && !stagePassed)
+        if(stageEnded && !decisionMade)
         {
-            stagePassed = true;
-            Invoke("StagePassed", 1f);
+            // Eğer yeterli nesne toplandıysa belirli bir süre bekledikten sonra animasyonu başlat ve
+            // bu bölümün geçildiğini GameManager'a söyle.
+            if(collectedObjects >= requiredObjects)
+            {
+                decisionMade = true;
+                Invoke("StagePassed", 1f);
+            }
+            // eğer yeterli nesne toplanmadıysa timedelay kadar bekle ve ondan sonra stage failed durumuna geç.
+            // toplanan nesne sayısı her değiştiğinde sayacı resetle. İlerde çok fazla nesne olduğu
+            // zaman önemli bir durum olacak bu. Yani timedelay süresi boyunca toplanan nesne sayısı değişmezse fail olacak.
+            else
+            {
+                timeCounter -= Time.deltaTime;
+
+                if(lastCollectedObjects != collectedObjects)
+                {
+                    lastCollectedObjects = collectedObjects;
+                    timeCounter = timeDelay;
+                }
+
+                if(timeCounter <= 0)
+                {
+                    decisionMade = true;
+                    StageFailed();
+                }
+            }
         }
     }
 
@@ -56,5 +86,10 @@ public class BallBox : MonoBehaviour
         // OnTriggerEnter tekrar çalşıp da picker'ı durdurmasın diye endpoint nesnesini kapat.
         endpoint.SetActive(false);
         Picker.Instance.MoveToNextStage();
+    }
+
+    void StageFailed()
+    {
+        
     }
 }

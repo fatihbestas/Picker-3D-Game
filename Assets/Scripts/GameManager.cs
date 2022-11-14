@@ -8,9 +8,14 @@ public class GameManager : Singleton<GameManager>, IDataPersistence
     // bu diziye başka scriptlerden direk erişilmesini istemiyorum.
     // erişim için GetLevelGO fonksiyonu kullanılacak.
     [SerializeField] private GameObject[] levels;
-    public int currentLevel;
-    public bool stagePassed;
+    [System.NonSerialized] public int currentLevel;
+    [System.NonSerialized] public bool stagePassed;
     private int passedStageCount;
+    public GameObject startScreen;
+    public GameObject playScreen;
+    public GameObject levelFailedScreen;
+    public GameObject levelCompleteScreen;
+    private bool gamePaused;
 
     public void LoadData(PlayerData data) 
     {
@@ -26,6 +31,10 @@ public class GameManager : Singleton<GameManager>, IDataPersistence
 
     void Start()
     {
+        // başlangıçta oyun kullanıcıdan input gelmesini bekliyor.
+        gamePaused = true;
+        Time.timeScale = 0;
+
         stagePassed = false;
         passedStageCount = 0;
         
@@ -34,15 +43,35 @@ public class GameManager : Singleton<GameManager>, IDataPersistence
     
     void Update()
     {
-         if(stagePassed)
-         {
+        if(gamePaused && Input.touchCount != 0 && Input.GetTouch(0).phase == TouchPhase.Moved)
+        {
+            StartGame();
+        }
+
+        // for editor debug 
+        if(gamePaused && Input.GetKey(KeyCode.A))
+        {
+            StartGame();
+        }
+
+
+        if(stagePassed)
+        {
 
             passedStageCount += 1;
             if(passedStageCount == 3)
             {
                 Victory();
             }
-         }
+        }
+    }
+
+    void StartGame()
+    {
+        gamePaused = false;
+        startScreen.SetActive(false);
+        playScreen.SetActive(true);
+        Time.timeScale = 1;
     }
 
     public GameObject GetLevelGO(int levelNumber)
@@ -65,7 +94,7 @@ public class GameManager : Singleton<GameManager>, IDataPersistence
         }
         else
         {
-            
+
         }
     }
 }

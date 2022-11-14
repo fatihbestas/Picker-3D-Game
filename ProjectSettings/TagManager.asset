@@ -8,6 +8,7 @@ TagManager:
   - EndPoint
   - Collectible
   - BallBox
+  - Picker
   layers:
   - Default
   - TransparentFX

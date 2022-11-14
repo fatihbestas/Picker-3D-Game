@@ -84,13 +84,9 @@ public class Picker : Singleton<Picker>
         rb.velocity = velocityVector;
     }
 
-    void OnTriggerEnter(Collider other)
+    public void Stop()
     {
-        // When the picker reaches the end of the level, it stops and releases the balls.
-        if(other.CompareTag("EndPoint"))
-        {
-            reachedEndPoint = true;
-        }
+        reachedEndPoint = true;
     }
 
     public void MoveToNextStage()
