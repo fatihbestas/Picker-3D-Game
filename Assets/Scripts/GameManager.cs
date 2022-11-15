@@ -40,7 +40,6 @@ public class GameManager : Singleton<GameManager>, IDataPersistence
         passedStageCount = 0;
         
     }
-
     
     void Update()
     {
@@ -50,7 +49,7 @@ public class GameManager : Singleton<GameManager>, IDataPersistence
         }
 
         // for editor debug 
-        if(gamePaused && Input.GetKey(KeyCode.A))
+        if(gamePaused && (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D)) || Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.LeftArrow))
         {
             StartGame();
         }
@@ -58,11 +57,17 @@ public class GameManager : Singleton<GameManager>, IDataPersistence
 
         if(stagePassed)
         {
-
             passedStageCount += 1;
+            stagePassed = false;
+
             if(passedStageCount == 3)
             {
+                passedStageCount = 0;
                 Victory();
+            }
+            else
+            {
+                Invoke("MovePickerToNextStage", 1.5f);
             }
         }
     }
@@ -82,8 +87,14 @@ public class GameManager : Singleton<GameManager>, IDataPersistence
         return levels[levelNumber - 1];
     }
 
+    void MovePickerToNextStage()
+    {
+        Picker.Instance.GoToNextStage();
+    }
+
     public void LevelFailed()
     {
+        Time.timeScale = 0;
         playScreen.SetActive(false);
         levelFailedScreen.SetActive(true);
     }
@@ -103,10 +114,16 @@ public class GameManager : Singleton<GameManager>, IDataPersistence
         {
             currentLevel += 1;
             DataPersistenceManager.instance.SaveGame();
+            Invoke("MovePickerToNextLevel", 1.5f);
         }
         else
         {
 
         }
+    }
+
+    void MovePickerToNextLevel()
+    {
+        Picker.Instance.GoToNextLevel();
     }
 }

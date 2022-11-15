@@ -75,17 +75,10 @@ public class BallBox : MonoBehaviour
 
     void StagePassed()
     {
-        animator.SetTrigger("slideGround");
         GameManager.Instance.stagePassed = true;
-        // animasyon başladıktan 1.5 saniye sonra picker'ı hareket ettir.
-        Invoke("MovePicker", 1.5f);
-    }
-
-    void MovePicker()
-    {
+        animator.SetTrigger("slideGround");
         // OnTriggerEnter tekrar çalşıp da picker'ı durdurmasın diye endpoint nesnesini kapat.
         endpoint.SetActive(false);
-        Picker.Instance.MoveToNextStage();
     }
 
     void StageFailed()
