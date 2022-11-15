@@ -136,8 +136,9 @@ public class Picker : Singleton<Picker>
         currentLevel = GameManager.Instance.currentLevel;
         startingPoint = GameManager.Instance.GetLevelGO(currentLevel).GetComponent<LevelData>().startingPoint;
         moveToNextLevel = true;
-        // güzel bir görüntü oluşması için toplayıcı bir sonraki levele giderken 
-        // kameranın onu takip etmesini istemiyorum.
+        // Güzel bir görüntü oluşması için toplayıcı bir sonraki levele giderken 
+        // kameranın onu takip etmesini istemiyorum. Eskiden ataride oynadığım bir
+        // yarış oyununda öyleydi.
         CameraController.Instance.follow = false;
     }
 
