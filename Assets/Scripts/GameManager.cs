@@ -58,6 +58,14 @@ public class GameManager : Singleton<GameManager>, IDataPersistence
 
         UpdateLevelTxt();
 
+        // başlangıçta tüm levellerin gameobjeleri pasif durumda.
+        // seçili levelin ve eğer varsa bir sonraki levelin gameobjesini aktif hale getirelim.
+        GetLevelGO(currentLevel).SetActive(true);
+        if(levels.Length > currentLevel)
+        {
+            GetLevelGO(currentLevel + 1).SetActive(true);
+        }
+
     }
     
     void Update()
@@ -189,6 +197,13 @@ public class GameManager : Singleton<GameManager>, IDataPersistence
         playScreen.SetActive(true);
         Picker.Instance.Move();
         UpdateLevelTxt();
+        // geçtiğimiz levelin gameobjesini pasif konuma getirelim ve eğer varsa
+        // şuanki bölümden bir sonraki bölümün gameobjesini aktif konuma getirelim.
+        GetLevelGO(currentLevel-1).SetActive(false);
+        if(levels.Length > currentLevel)
+        {
+            GetLevelGO(currentLevel + 1).SetActive(true);
+        }
     }
 
     void OpenGameCompleteScreen()
