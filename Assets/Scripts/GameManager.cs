@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 public class GameManager : Singleton<GameManager>, IDataPersistence
 {
@@ -18,6 +19,15 @@ public class GameManager : Singleton<GameManager>, IDataPersistence
     public GameObject levelCompleteScreen;
     public GameObject gameCompleteScreen;
     private bool gamePaused;
+    [SerializeField] TextMeshProUGUI currentLevelTxt;
+    [SerializeField] TextMeshProUGUI nextLevelTxt;
+
+    [SerializeField] GameObject[] emptyLights;
+    [SerializeField] GameObject[] greenLights;
+    [SerializeField] GameObject[] yellowLights;
+    [SerializeField] GameObject[] redLights;
+
+    Dictionary<int, GameObject[]> lights = new Dictionary<int, GameObject[]>();
 
     public void LoadData(PlayerData data) 
     {
@@ -39,7 +49,15 @@ public class GameManager : Singleton<GameManager>, IDataPersistence
 
         stagePassed = false;
         passedStageCount = 0;
-        
+
+        // tüm light objelerini bir sözlükte tut.
+        lights[0] = emptyLights;
+        lights[1] = greenLights;
+        lights[2] = yellowLights;
+        lights[3] = redLights;
+
+        UpdateLevelTxt();
+
     }
     
     void Update()
@@ -61,14 +79,24 @@ public class GameManager : Singleton<GameManager>, IDataPersistence
             passedStageCount += 1;
             stagePassed = false;
 
-            if(passedStageCount == 3)
+            if(passedStageCount == 1)
             {
+                emptyLights[0].SetActive(false);
+                greenLights[0].SetActive(true);
+                Invoke("MovePickerToNextStage", 1.5f);
+            }
+            else if(passedStageCount == 2)
+            {
+                emptyLights[1].SetActive(false);
+                greenLights[1].SetActive(true);
+                Invoke("MovePickerToNextStage", 1.5f);
+            }
+            else if(passedStageCount == 3)
+            {
+                emptyLights[2].SetActive(false);
+                greenLights[2].SetActive(true);
                 passedStageCount = 0;
                 Victory();
-            }
-            else
-            {
-                Invoke("MovePickerToNextStage", 1.5f);
             }
         }
     }
@@ -94,6 +122,27 @@ public class GameManager : Singleton<GameManager>, IDataPersistence
     }
 
     public void LevelFailed()
+    {
+        if(passedStageCount == 0)
+        {
+            emptyLights[0].SetActive(false);
+            redLights[0].SetActive(true);
+        }
+        else if(passedStageCount == 1)
+        {
+            emptyLights[1].SetActive(false);
+            redLights[1].SetActive(true);
+        }
+        else if(passedStageCount == 2)
+        {
+            emptyLights[2].SetActive(false);
+            redLights[2].SetActive(true);
+        }
+
+        Invoke("LevelFailedScreen", 0.5f);
+    }
+
+    void LevelFailedScreen()
     {
         Time.timeScale = 0;
         playScreen.SetActive(false);
@@ -139,11 +188,45 @@ public class GameManager : Singleton<GameManager>, IDataPersistence
         levelCompleteScreen.SetActive(false);
         playScreen.SetActive(true);
         Picker.Instance.Move();
+        UpdateLevelTxt();
     }
 
     void OpenGameCompleteScreen()
     {
         playScreen.SetActive(false);
         gameCompleteScreen.SetActive(true);
+    }
+
+    void UpdateLevelTxt()
+    {
+        SetLightsToInitialState();
+
+        currentLevelTxt.text = currentLevel.ToString();
+
+        if(levels.Length > currentLevel)
+        {
+            nextLevelTxt.text = (currentLevel + 1).ToString();
+        }
+        else
+        {
+            nextLevelTxt.text = "?";
+        }
+    }
+
+    void SetLightsToInitialState()
+    {
+        // tüm ışık objelerini kapat.
+        for (int i = 0; i < lights.Count; i++)
+        {
+            for (int i2 = 0; i2 < lights[i].Length; i2++)
+            {
+                lights[i][i2].SetActive(false);
+            }
+        }
+
+        // boş ışıkları aç.
+        emptyLights[0].SetActive(true);
+        emptyLights[1].SetActive(true);
+        emptyLights[2].SetActive(true);
     }
 }
