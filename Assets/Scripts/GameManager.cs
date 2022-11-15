@@ -16,6 +16,7 @@ public class GameManager : Singleton<GameManager>, IDataPersistence
     public GameObject playScreen;
     public GameObject levelFailedScreen;
     public GameObject levelCompleteScreen;
+    public GameObject gameCompleteScreen;
     private bool gamePaused;
 
     public void LoadData(PlayerData data) 
@@ -109,7 +110,7 @@ public class GameManager : Singleton<GameManager>, IDataPersistence
         // level başarıyla geçildi.
         // Eğer oynadığımız levelin ilerisinde başka leveller varsa
         // currentLevel değişkenini 1 arttırıp oyunu kaydet. Eğer başka 
-        // level yoksa " tebrikler oyunu bitirdiniz" ekranını aç.
+        // level yoksa GameComplete ekranını aç.
         if(levels.Length > currentLevel)
         {
             currentLevel += 1;
@@ -118,7 +119,7 @@ public class GameManager : Singleton<GameManager>, IDataPersistence
         }
         else
         {
-
+            OpenGameCompleteScreen();
         }
     }
 
@@ -138,5 +139,11 @@ public class GameManager : Singleton<GameManager>, IDataPersistence
         levelCompleteScreen.SetActive(false);
         playScreen.SetActive(true);
         Picker.Instance.Move();
+    }
+
+    void OpenGameCompleteScreen()
+    {
+        playScreen.SetActive(false);
+        gameCompleteScreen.SetActive(true);
     }
 }
