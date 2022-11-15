@@ -6,8 +6,8 @@ public class Picker : Singleton<Picker>
     private Rigidbody rb;
     private Vector3 velocityVector;
     private Vector3 positionVector;
-    private float speedForX_axis = 20;
-    private float speedCoeffForX = 1;
+    private float speedForX_axis = 23;
+    private float speedCoeffForX = 2;
     private bool reachedEndPoint = false;
     private bool objectsPushed = false;
     private bool moveToNextLevel = false;
