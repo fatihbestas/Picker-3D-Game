@@ -89,7 +89,7 @@ public class GameManager : Singleton<GameManager>, IDataPersistence
 
     void MovePickerToNextStage()
     {
-        Picker.Instance.GoToNextStage();
+        Picker.Instance.Move();
     }
 
     public void LevelFailed()
@@ -125,5 +125,18 @@ public class GameManager : Singleton<GameManager>, IDataPersistence
     void MovePickerToNextLevel()
     {
         Picker.Instance.GoToNextLevel();
+    }
+
+    public void OpenLevelCompleteScreen()
+    {
+        playScreen.SetActive(false);
+        levelCompleteScreen.SetActive(true);
+    }
+
+    public void Continue()
+    {
+        levelCompleteScreen.SetActive(false);
+        playScreen.SetActive(true);
+        Picker.Instance.Move();
     }
 }

@@ -126,7 +126,7 @@ public class Picker : Singleton<Picker>
         
     }
 
-    public void GoToNextStage()
+    public void Move()
     {
         reachedEndPoint = false;
     }
@@ -153,6 +153,7 @@ public class Picker : Singleton<Picker>
                 transform.position = startingPoint.position;
                 moveToNextLevel = false;
                 CameraController.Instance.follow = true;
+                GameManager.Instance.OpenLevelCompleteScreen();
             }
             else
             {
