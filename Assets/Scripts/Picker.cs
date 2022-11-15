@@ -136,6 +136,9 @@ public class Picker : Singleton<Picker>
         currentLevel = GameManager.Instance.currentLevel;
         startingPoint = GameManager.Instance.GetLevelGO(currentLevel).GetComponent<LevelData>().startingPoint;
         moveToNextLevel = true;
+        // güzel bir görüntü oluşması için toplayıcı bir sonraki levele giderken 
+        // kameranın onu takip etmesini istemiyorum.
+        CameraController.Instance.follow = false;
     }
 
     public void MoveToNextLevel()
@@ -143,12 +146,13 @@ public class Picker : Singleton<Picker>
         if(moveToNextLevel)
         {
             Vector3 dir = startingPoint.position - transform.position;
-            float distanceThisFrame = 30f * Time.fixedDeltaTime;
+            float distanceThisFrame = 40f * Time.fixedDeltaTime;
 
             if (dir.magnitude <= distanceThisFrame)
             {
                 transform.position = startingPoint.position;
                 moveToNextLevel = false;
+                CameraController.Instance.follow = true;
             }
             else
             {
