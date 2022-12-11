@@ -58,7 +58,12 @@ public class GameManager : Singleton<GameManager>, IDataPersistence
 
         UpdateLevelTxt();
 
-        // başlangıçta tüm levellerin gameobjeleri pasif durumda.
+        // başlangıçta tüm levellerin gameobjeleri pasif duruma getirelim.
+        for (int i = 0; i < levels.Length; i++)
+        {
+            levels[i].SetActive(false);
+        }
+
         // seçili levelin ve eğer varsa bir sonraki levelin gameobjesini aktif hale getirelim.
         GetLevelGO(currentLevel).SetActive(true);
         if(levels.Length > currentLevel)
