@@ -27704,7 +27704,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1996714168
 Transform:
   m_ObjectHideFlags: 0
@@ -29410,6 +29410,26 @@ PrefabInstance:
       propertyPath: m_Name
       value: Picker
       objectReference: {fileID: 0}
+    - target: {fileID: 7190594040076571460, guid: f5fc07cc504f1bd4bbdb6ca8a265112f, type: 3}
+      propertyPath: m_Mass
+      value: 150
+      objectReference: {fileID: 0}
+    - target: {fileID: 7190594040076571460, guid: f5fc07cc504f1bd4bbdb6ca8a265112f, type: 3}
+      propertyPath: m_Interpolate
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7190594040076571460, guid: f5fc07cc504f1bd4bbdb6ca8a265112f, type: 3}
+      propertyPath: m_IsKinematic
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7190594040076571460, guid: f5fc07cc504f1bd4bbdb6ca8a265112f, type: 3}
+      propertyPath: m_CollisionDetection
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7190594040076571463, guid: f5fc07cc504f1bd4bbdb6ca8a265112f, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f5fc07cc504f1bd4bbdb6ca8a265112f, type: 3}
 --- !u!1001 &9079824537785377751
@@ -29474,6 +29494,14 @@ PrefabInstance:
     - target: {fileID: 3921837350114028023, guid: a36fb9743ca731144aaf5af504386e6d, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9079824537025711482, guid: a36fb9743ca731144aaf5af504386e6d, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 9079824537025711482, guid: a36fb9743ca731144aaf5af504386e6d, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 3.5
       objectReference: {fileID: 0}
     - target: {fileID: 9079824538106107264, guid: a36fb9743ca731144aaf5af504386e6d, type: 3}
       propertyPath: m_Camera

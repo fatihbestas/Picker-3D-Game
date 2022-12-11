@@ -4,10 +4,11 @@ public class Picker : Singleton<Picker>
 {
     public float speedForZ_axis;
     private Rigidbody rb;
-    private Vector3 velocityVector;
+    private Vector3 forceVector;
     private Vector3 positionVector;
-    private float speedForX_axis = 23;
+    private float SpeedForX_axis;
     private float speedCoeffForX = 2;
+    private float maxSpeedForX_axis = 17f;
     private bool reachedEndPoint = false;
     private bool objectsPushed = false;
     private bool moveToNextLevel = false;
@@ -20,7 +21,7 @@ public class Picker : Singleton<Picker>
     {
         rb = this.GetComponent<Rigidbody>();
 
-        velocityVector = new Vector3(0, 0, 0);
+        forceVector = new Vector3(0, 0, 0);
 
         PlaceAtStartingPoint();
     }
@@ -28,19 +29,22 @@ public class Picker : Singleton<Picker>
     void Update()
     {
         // movement in the x-axis depending on the user's drag input.
-        velocityVector.x =  speedCoeffForX * TouchInputForX_axis();
+        SpeedForX_axis =  speedCoeffForX * TouchInputForX_axis();
 
-        velocityVector.x = Mathf.Clamp(velocityVector.x, -speedForX_axis, speedForX_axis);
+        SpeedForX_axis = Mathf.Clamp(SpeedForX_axis, -maxSpeedForX_axis, maxSpeedForX_axis);
 
         // for editor debug
         if(Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
         {
-            velocityVector.x =  -speedForX_axis / 2;
+            SpeedForX_axis =  -maxSpeedForX_axis;
         }
         else if(Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
         {
-            velocityVector.x =  speedForX_axis / 2;
+            SpeedForX_axis =  maxSpeedForX_axis;
         }
+
+        forceVector.x = SpeedController(SpeedForX_axis, rb.velocity.x);
+
     }
 
     void FixedUpdate()
@@ -52,31 +56,51 @@ public class Picker : Singleton<Picker>
             MoveToNextLevel();
 
             // when picker going to the next level user can't control x velocity.
-            velocityVector.x = 0;
+            forceVector.x = 0;
         }
 
-        // If the end of the level is not reached,
+        // If the end of the stage is not reached,
         // The picker is constantly moving in the Z axis.
         if(reachedEndPoint)
         {
-            velocityVector.z = 0;
+            // hedef noktada beklerken z ekseninde hareket etmesine izin verme.
+            if(rb.velocity.z != 0)
+            {
+                rb.velocity = new Vector3(rb.velocity.x, rb.velocity.y, 0);
+            }
+
+            forceVector.z = 0;
 
             // push objects out.
             PushObjects();
         }
         else
         {
-            velocityVector.z = speedForZ_axis;
+            forceVector.z = SpeedController(speedForZ_axis, rb.velocity.z);
         }
 
-        // Apply the calculated velocity vector to the picker.
-        rb.velocity = velocityVector;
-    
+        rb.AddForce(forceVector, ForceMode.Acceleration);
+    }
+
+    float SpeedController(float desiredSpeed, float currentSpeed)
+    {
+        float force;
+        float maxForce = 100f;
+        float error = desiredSpeed - currentSpeed;
+        float kp = 10;
+
+        // Oransal kontrol şu an güzel çalışıyor. 
+        // O yüzden integral ve türev kontrollerine şimdilik gerek yok.
+        force = error * kp;
+
+        force = Mathf.Clamp(force, -maxForce, maxForce);
+
+        return force;
     }
 
     void LateUpdate()
     {
-        // prevent the collector from leaving the platform.
+        // prevent the picker from leaving the platform.
         positionVector = transform.position;
         positionVector.x = Mathf.Clamp(positionVector.x, -5.5f, 5.5f);
         positionVector.y = 0.03f;
@@ -108,6 +132,9 @@ public class Picker : Singleton<Picker>
         reachedEndPoint = true;
         objectsPushed = false;
         backWallInitialPosition = backWall.localPosition;
+
+        // hedef noktaya ulaşınca z eksenindeki hareketi hemen durdur.
+        rb.velocity = new Vector3(rb.velocity.x, rb.velocity.y, 0);
     }
 
     void PushObjects()
@@ -140,6 +167,9 @@ public class Picker : Singleton<Picker>
         // kameranın onu takip etmesini istemiyorum. Eskiden ataride oynadığım bir
         // yarış oyununda öyleydi.
         CameraController.Instance.follow = false;
+
+        // bir sonraki levele gitmeden önce x eksenindeki hızı sıfırla.
+        rb.velocity = new Vector3(0, rb.velocity.y, rb.velocity.z);
     }
 
     public void MoveToNextLevel()
